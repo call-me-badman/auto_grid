@@ -11,24 +11,22 @@ const Chat = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Sync messages with localStorage
   useEffect(() => {
     const savedMessages = localStorage.getItem('auto_grid_messages');
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     } else {
-      // Default messages if none exist
       const initialMessages = [];
       setMessages(initialMessages);
       localStorage.setItem('auto_grid_messages', JSON.stringify(initialMessages));
     }
 
-    // Listen for storage changes from other tabs
     const handleStorageChange = (e) => {
       if (e.key === 'auto_grid_messages') {
         setMessages(JSON.parse(e.newValue));
       }
     };
+
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
@@ -46,8 +44,7 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Initialize conversations list for Admin
-  const conversations = WORKER_PERSONAS.map(w => ({
+  const conversations = WORKER_PERSONAS.map((w) => ({
     id: w.id,
     name: w.name,
     avatar: w.initials,
@@ -58,7 +55,7 @@ const Chat = () => {
     role: w.role
   }));
 
-  const filteredConversations = conversations.filter(conv =>
+  const filteredConversations = conversations.filter((conv) =>
     conv.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     conv.zone.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -72,8 +69,7 @@ const Chat = () => {
       setSelectedChat({
         id: 'admin',
         name: 'Control Center',
-        avatar: 'AD',
-        online: true,
+        online: false,
         role: 'System Administrator'
       });
     }
@@ -97,7 +93,6 @@ const Chat = () => {
     saveMessages(updatedMessages);
     setInputText('');
 
-    // Simulated intelligent reply if it's the first time
     if (!isAdmin && inputText.toLowerCase().includes('status')) {
       setTimeout(() => {
         const reply = {
@@ -114,22 +109,22 @@ const Chat = () => {
     }
   };
 
-  // Filter messages for current conversation
-  const currentChatMessages = messages.filter(msg => {
+  const currentChatMessages = messages.filter((msg) => {
     if (msg.type === 'system') return true;
     if (isAdmin) {
-      // Admin sees messages between them and the selected worker
       return (msg.senderId === 'admin' && msg.receiverId === selectedChat?.id) ||
         (msg.senderId === selectedChat?.id && msg.receiverId === 'admin');
-    } else {
-      // Worker sees messages between them and admin
-      return (msg.senderId === user?.id && msg.receiverId === 'admin') ||
-        (msg.senderId === 'admin' && msg.receiverId === user?.id);
     }
-  }).map(msg => ({
+
+    return (msg.senderId === user?.id && msg.receiverId === 'admin') ||
+      (msg.senderId === 'admin' && msg.receiverId === user?.id);
+  }).map((msg) => ({
     ...msg,
-    // Adjust type for display (sent vs received)
-    type: msg.senderId === (isAdmin ? 'admin' : user?.id) ? 'sent' : (msg.type === 'system' ? 'system' : 'received')
+    type: msg.type === 'system'
+      ? 'system'
+      : msg.senderId === (isAdmin ? 'admin' : user?.id)
+        ? 'sent'
+        : 'received'
   }));
 
   return (
@@ -138,9 +133,6 @@ const Chat = () => {
         <div className="chat-sidebar">
           <div className="chat-header">
             <h3>GRID COMMUNICATIONS</h3>
-            <button className="new-chat-btn" title="Broadcast message">
-              <Users size={16} />
-            </button>
           </div>
 
           <div className="search-box">
@@ -193,12 +185,8 @@ const Chat = () => {
                 </div>
                 <div className="chat-details">
                   <h4 className="chat-name">{selectedChat.name}</h4>
-                  <p className="chat-status">
-                    <Circle size={8} fill="var(--green)" color="var(--green)" />
-                    LIVE CONNECTION · {selectedChat.role || (isAdmin ? selectedChat.zone : 'SYSTEM')}
-                  </p>
+                  {!isAdmin && <span className="direct-line-badge">DIRECT LINE</span>}
                 </div>
-                {!isAdmin && <span className="direct-line-badge">DIRECT LINE</span>}
               </div>
             </div>
 
@@ -226,7 +214,7 @@ const Chat = () => {
                 <input
                   type="text"
                   className="message-input"
-                  placeholder={isAdmin ? `Secure message to ${selectedChat.name}...` : 'Send status update to Control Center...'}
+                  placeholder={isAdmin ? `Secure message to ${selectedChat.name}...` : 'Send updates, issues and casual messages to the Admin...'}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                 />

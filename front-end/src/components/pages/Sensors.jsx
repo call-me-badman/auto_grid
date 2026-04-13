@@ -56,12 +56,6 @@ const Sensors = () => {
           >
             <Clock size={14} /> Daily
           </button>
-          <button
-            className={`time-btn ${timeframe === 'weekly' ? 'active' : ''}`}
-            onClick={() => setTimeframe('weekly')}
-          >
-            <Clock size={14} /> Weekly
-          </button>
         </div>
       </div>
 

@@ -24,12 +24,14 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
       { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
       { id: 'workers', label: 'Workers', icon: Users },
       { id: 'chat', label: 'Chat', icon: MessageSquare },
+      // {id: 'ai', label: 'AI'},
     ]
     : [
       { id: 'overview', label: 'Overview', icon: Home },
       { id: 'sensors', label: 'My Zone', icon: Activity },
       { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
       { id: 'chat', label: 'Admin Chat', icon: MessageSquare },
+      // {id: 'ai', label: 'AI'},
     ];
 
   const handleNavClick = (tabId) => {

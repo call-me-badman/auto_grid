@@ -8,7 +8,7 @@ const ADMIN_USER = {
   id: 'admin',
   name: 'Administrator',
   email: 'admin@grid.com',
-  initials: 'AD',
+  // initials: 'AD',
   zone: null,
   role: 'System Administrator',
   type: 'admin'
@@ -121,7 +121,35 @@ const LoginPage = () => {
             <div className="form-group">
               <label>Worker profile</label>
               <div className="worker-selector" role="listbox" aria-label="Worker selector">
-                {WORKER_PERSONAS.map((w) => {
+                 <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <div className="input-with-icon">
+                  <Mail className="input-icon" size={18} />
+                  <input
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="worker@grid.com"
+                    autoComplete="username"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <div className="input-with-icon">
+                  <Lock className="input-icon" size={18} />
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                  />
+                </div>
+              </div>
+                {/* {WORKER_PERSONAS.map((w) => {
                   const selected = w.id === selectedWorkerId;
                   return (
                     <button
@@ -139,7 +167,7 @@ const LoginPage = () => {
                       {selected && <Check className="check-icon" size={18} />}
                     </button>
                   );
-                })}
+                })} */}
               </div>
             </div>
           )}

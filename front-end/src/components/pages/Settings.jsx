@@ -67,7 +67,7 @@ const Settings = () => {
                 background: 'rgba(255, 0, 85, 0.1)', color: 'var(--red)', border: '1px solid var(--red)',
                 fontWeight: 800, fontSize: 12, cursor: 'pointer', transition: '0.2s'
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = 'var(--red)'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--red)'}
               onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 0, 85, 0.1)'}
             >
               TERMINATE SESSION (LOGOUT)

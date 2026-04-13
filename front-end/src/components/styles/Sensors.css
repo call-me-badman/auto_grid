@@ -62,7 +62,7 @@
 }
 
 .summary-block {
-  background: var(--card);
+  background: #fff;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
@@ -135,7 +135,6 @@
 
 .sensor-card:hover {
   border-color: var(--blue);
-  background: rgba(30, 58, 95, 0.1);
 }
 
 .sensor-header {
@@ -252,6 +251,20 @@
 }
 
 @keyframes pulse-simple {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
   0% {
     opacity: 0.5;
     transform: scale(0.8);
