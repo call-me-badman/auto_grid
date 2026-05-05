@@ -1,0 +1,150 @@
+.landing-container {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+}
+
+.landing-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo-section {
+  margin-bottom: 60px;
+}
+
+.logo-icon {
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+
+.logo-text {
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.logo-sub {
+  font-size: 14px;
+  color: var(--sub);
+  letter-spacing: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hero-section {
+  margin-bottom: 80px;
+}
+
+.hero-title {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  font-family: var(--font-accent);
+  background: linear-gradient(135deg, var(--text) 0%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-description {
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-bottom: 80px;
+}
+
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--blue);
+}
+
+.feature-icon {
+  color: var(--blue);
+  margin-bottom: 20px;
+}
+
+.feature-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.feature-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.cta-section {
+  text-align: center;
+}
+
+.cta-button {
+  background-color: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 48px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+}
+
+.cta-subtext {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .feature-card {
+    padding: 32px 24px;
+  }
+}

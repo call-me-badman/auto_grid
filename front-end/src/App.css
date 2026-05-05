@@ -1,0 +1,26 @@
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.App-header {
+  text-align: center;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  padding: 2rem;
+}
+
+.App-header h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 2.5vw, 3rem);
+}
+
+.App-header p {
+  margin: 0;
+  font-size: 1rem;
+  color: #4b5563;
+}

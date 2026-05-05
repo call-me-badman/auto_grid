@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PowerHive Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07101f;
+    --sidebar: #080f1e;
+    --card: #0a1628;
+    --border: #1e3a5f;
+    --accent: #f59e0b;
+    --blue: #60a5fa;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --sub: #475569;
+    --deep: #071020;
+  }
+
+  body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .mono { font-family: 'Share Tech Mono', monospace; }
+
+  /* ── LAYOUT ── */
+  .shell { display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px; background: var(--sidebar); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0;
+  }
+  .logo-wrap { padding: 18px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+  .logo-icon { font-size: 26px; }
+  .logo-text { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .logo-sub { font-size: 10px; color: var(--sub); letter-spacing: 1.5px; }
+  .nav-label { font-size: 10px; color: var(--sub); letter-spacing: 2px; font-weight: 700; padding: 14px 16px 6px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 14px;
+    border: none; background: transparent; color: var(--muted); font-size: 14px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 600; cursor: pointer;
+    border-radius: 6px; margin: 1px 6px; width: calc(100% - 12px); text-align: left;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: #0f2040; color: var(--text); }
+  .nav-btn.active { background: #0f3460; color: var(--accent); }
+  .nav-badge { margin-left: auto; background: var(--red); color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--sidebar); flex-shrink: 0; }
+  .page-title { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .live-pill { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); font-weight: 700; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
+  .alert-banner { background: #ef444422; border: 1px solid var(--red); color: var(--red); border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 700; }
+  .content { padding: 20px; overflow-y: auto; flex: 1; }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; color: var(--muted); letter-spacing: 2px; font-weight: 700; margin-bottom: 14px; font-family: 'Share Tech Mono', monospace; }
+
+  /* ── STATS ROW ── */
+  .stats-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 100px; }
+  .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 4px; font-family: 'Share Tech Mono', monospace; }
+  .stat-val { font-size: 24px; font-weight: 700; font-family: 'Share Tech Mono', monospace; }
+  .stat-unit { font-size: 12px; color: var(--muted); margin-left: 3px; }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+
+  /* ── ZONE ROW ── */
+  .zone-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #0f2040; }
+  .zone-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .zone-name { font-size: 13px; font-weight: 600; }
+  .zone-sub { font-size: 11px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .status-pill { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 1px; margin-left: auto; font-family: 'Share Tech Mono', monospace; }
+
+  /* ── ALERTS ── */
+  .alert-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; background: var(--deep); border-radius: 5px; margin-bottom: 8px; border-left: 3px solid transparent; }
+  .alert-full { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid transparent; }
+  .alert-icon { font-size: 22px; }
+  .alert-title { font-size: 13px; font-weight: 700; }
+  .alert-meta { font-size: 11px; color: var(--sub); margin-top: 2px; font-family: 'Share Tech Mono', monospace; }
+  .resolve-btn { margin-left: auto; font-size: 11px; background: #0f3460; border: 1px solid #1e4a8a; color: var(--blue); border-radius: 4px; padding: 4px 10px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 600; white-space: nowrap; }
+  .resolve-btn:hover { background: #1e4a8a; }
+  .resolved-tag { margin-left: auto; font-size: 11px; color: var(--green); font-weight: 700; font-family: 'Share Tech Mono', monospace; }
+  .active-tag { color: var(--red); font-size: 11px; font-weight: 700; margin-left: auto; font-family: 'Share Tech Mono', monospace; }
+
+  /* ── WORKERS ── */
+  .workers-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+  .worker-card { background: var(--deep); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; min-width: 120px; }
+  .worker-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #0f2040; }
+  .worker-name { font-size: 14px; font-weight: 600; }
+  .worker-sub { font-size: 11px; color: var(--muted); }
+  .chat-btn { font-size: 12px; background: #0f3460; border: 1px solid #1e4a8a; color: var(--blue); border-radius: 4px; padding: 6px 12px; cursor: pointer; margin-left: auto; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+
+  /* ── AVATAR ── */
+  .avatar { border-radius: 50%; background: #0f3460; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text); font-family: 'Share Tech Mono', monospace; border: 1.5px solid #1e4a8a; flex-shrink: 0; position: relative; }
+  .avatar-sm { width: 34px; height: 34px; font-size: 11px; }
+  .avatar-md { width: 44px; height: 44px; font-size: 14px; }
+  .avatar-lg { width: 52px; height: 52px; font-size: 16px; }
+  .online-dot { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--sidebar); }
+
+  /* ── CHAT ── */
+  .chat-layout { display: flex; height: calc(100vh - 57px); }
+  .chat-list { width: 200px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; }
+  .chat-list-label { padding: 14px 14px 6px; font-size: 10px; color: var(--muted); letter-spacing: 2px; font-weight: 700; font-family: 'Share Tech Mono', monospace; }
+  .chat-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #0f2040; transition: background 0.1s; }
+  .chat-list-item:hover { background: #0a1628; }
+  .chat-list-item.active { background: #0f3460; }
+  .chat-window { flex: 1; display: flex; flex-direction: column; }
+  .chat-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--sidebar); flex-shrink: 0; }
+  .messages-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+  .msg-row { display: flex; gap: 8px; align-items: flex-end; }
+  .msg-row.right { flex-direction: row-reverse; }
+  .bubble { padding: 9px 13px; border-radius: 8px; font-size: 13px; max-width: 280px; line-height: 1.5; }
+  .bubble-admin { background: #0f3460; color: var(--text); border-bottom-right-radius: 2px; }
+  .bubble-worker { background: #1e3a5f; color: var(--text); border-bottom-left-radius: 2px; }
+  .msg-time { font-size: 10px; color: var(--sub); margin-top: 3px; font-family: 'Share Tech Mono', monospace; }
+  .msg-time.right { text-align: right; }
+  .chat-input-row { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--sidebar); flex-shrink: 0; }
+  .chat-input { flex: 1; background: var(--deep); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 10px 14px; font-size: 13px; outline: none; font-family: 'Share Tech Mono', monospace; transition: border 0.2s; }
+  .chat-input:focus { border-color: var(--blue); }
+  .send-btn { background: var(--accent); border: none; color: #07101f; border-radius: 6px; padding: 10px 18px; font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; transition: opacity 0.2s; }
+  .send-btn:hover { opacity: 0.85; }
+
+  /* ── VIEW TOGGLE ── */
+  .view-toggle { position: fixed; top: 12px; right: 12px; z-index: 9999; display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 4px; }
+  .toggle-btn { padding: 5px 14px; border-radius: 4px; border: none; background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; transition: all 0.15s; }
+  .toggle-btn.active { background: #0f3460; color: var(--accent); }
+
+  /* ── SENSOR TABLE ── */
+  .sensor-bar { height: 6px; border-radius: 3px; background: #0f2040; overflow: hidden; margin-top: 4px; }
+  .sensor-fill { height: 100%; border-radius: 3px; transition: width 1s; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.15);opacity:0.7} }
+  @keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .fadein { animation: fadein 0.25s ease; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- VIEW TOGGLE -->
+<div class="view-toggle">
+  <button class="toggle-btn active" onclick="switchView('admin', this)">⚡ Admin</button>
+  <button class="toggle-btn" onclick="switchView('worker', this)">👷 Worker</button>
+</div>
+
+<!-- ADMIN SHELL -->
+<div class="shell" id="admin-view">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">PowerHive</div>
+        <div class="logo-sub">CONTROL CENTER</div>
+      </div>
+    </div>
+    <div style="padding:0 6px;margin-top:8px">
+      <div class="nav-label">NAVIGATION</div>
+      <button class="nav-btn active" onclick="adminTab('overview',this)"><span>🏠</span> Overview</button>
+      <button class="nav-btn" onclick="adminTab('sensors',this)"><span>📡</span> Sensors</button>
+      <button class="nav-btn" onclick="adminTab('alerts',this)"><span>🚨</span> Alerts <span class="nav-badge" id="alert-badge">2</span></button>
+      <button class="nav-btn" onclick="adminTab('workers',this)"><span>👷</span> Workers</button>
+      <button class="nav-btn" onclick="adminTab('chat',this)"><span>💬</span> Chat</button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="avatar avatar-sm" style="width:36px;height:36px;font-size:12px">AD</div>
+      <div>
+        <div style="font-size:13px;font-weight:600">Administrator</div>
+        <div style="font-size:11px;color:var(--green)">● Active</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="admin-page-title">System Overview</div>
+      <div class="topbar-right">
+        <div class="alert-banner">🚨 2 Active Alerts</div>
+        <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div class="content fadein" id="tab-overview">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">🗺️ TOTAL ZONES</div><div class="stat-val mono" style="color:var(--blue)">4</div></div>
+        <div class="stat-card"><div class="stat-label">👷 WORKERS ONLINE</div><div class="stat-val mono" style="color:var(--green)">3</div></div>
+        <div class="stat-card"><div class="stat-label">🚨 ACTIVE ALERTS</div><div class="stat-val mono" style="color:var(--red)">2</div></div>
+        <div class="stat-card"><div class="stat-label">⚡ AVG VOLTAGE</div><div class="stat-val mono" style="color:var(--accent)" id="avg-volt">219<span class="stat-unit">V</span></div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">ZONE STATUS</div>
+          <div class="zone-row"><div class="zone-dot" style="background:var(--green)"></div><div style="flex:1"><div class="zone-name">Zone A</div><div class="zone-sub" id="za-reading">222V · 14.2A · 3.1kW</div></div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">NORMAL</div></div>
+          <div class="zone-row"><div class="zone-dot" style="background:var(--red)"></div><div style="flex:1"><div class="zone-name">Zone B</div><div class="zone-sub" id="zb-reading">258V · 38.0A · 9.8kW</div></div><div class="status-pill" style="background:#ef444422;color:var(--red);border:1px solid var(--red)">CRITICAL</div></div>
+          <div class="zone-row"><div class="zone-dot" style="background:var(--accent)"></div><div style="flex:1"><div class="zone-name">Zone C</div><div class="zone-sub">215V · 11.5A · 2.4kW</div></div><div class="status-pill" style="background:#f59e0b22;color:var(--accent);border:1px solid var(--accent)">WARNING</div></div>
+          <div class="zone-row"><div class="zone-dot" style="background:var(--green)"></div><div style="flex:1"><div class="zone-name">Zone D</div><div class="zone-sub">220V · 13.0A · 2.8kW</div></div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">NORMAL</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">RECENT ALERTS</div>
+          <div class="alert-row" style="border-color:var(--red)"><span class="alert-icon">⚡</span><div style="flex:1"><div class="alert-title">Overcurrent — Zone B</div><div class="alert-meta">09:02 · Value: 38A (limit: 30A)</div></div><button class="resolve-btn" onclick="resolveAlert(this,'alert-badge')">Resolve</button></div>
+          <div class="alert-row" style="border-color:var(--accent)"><span class="alert-icon">📈</span><div style="flex:1"><div class="alert-title">Overvoltage — Zone A</div><div class="alert-meta">08:45 · Value: 258V (limit: 250V)</div></div><button class="resolve-btn" onclick="resolveAlert(this,'alert-badge')">Resolve</button></div>
+          <div class="alert-row" style="border-color:var(--purple);opacity:0.5"><span class="alert-icon">🌡️</span><div style="flex:1"><div class="alert-title">Overheating — Zone D</div><div class="alert-meta">07:30 · Value: 82°C (limit: 75°C)</div></div><span class="resolved-tag">✓ Resolved</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">FIELD WORKERS</div>
+        <div class="workers-grid">
+          <div class="worker-card"><div class="avatar avatar-md" style="position:relative">JP<div class="online-dot" style="background:var(--green)"></div></div><div style="font-size:13px;font-weight:600;margin-top:8px">Jean Pierre</div><div style="font-size:11px;color:var(--muted)">Zone A</div><div style="font-size:11px;color:var(--green);margin-top:4px">● Online</div></div>
+          <div class="worker-card"><div class="avatar avatar-md" style="position:relative">AU<div class="online-dot" style="background:var(--green)"></div></div><div style="font-size:13px;font-weight:600;margin-top:8px">Amina Uwase</div><div style="font-size:11px;color:var(--muted)">Zone B</div><div style="font-size:11px;color:var(--green);margin-top:4px">● Online</div></div>
+          <div class="worker-card"><div class="avatar avatar-md" style="position:relative">EM<div class="online-dot" style="background:#6b7280"></div></div><div style="font-size:13px;font-weight:600;margin-top:8px">Eric Mugisha</div><div style="font-size:11px;color:var(--muted)">Zone C</div><div style="font-size:11px;color:#6b7280;margin-top:4px">○ Offline</div></div>
+          <div class="worker-card"><div class="avatar avatar-md" style="position:relative">DI<div class="online-dot" style="background:var(--green)"></div></div><div style="font-size:13px;font-weight:600;margin-top:8px">Diane Iradukunda</div><div style="font-size:11px;color:var(--muted)">Zone D</div><div style="font-size:11px;color:var(--green);margin-top:4px">● Online</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SENSORS TAB -->
+    <div class="content fadein" id="tab-sensors" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;font-family:'Share Tech Mono',monospace">● Readings update every 3 seconds from field sensors</div>
+      <div class="card" style="border-left:3px solid var(--green)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="card-title" style="margin:0">ZONE A</div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">NORMAL</div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">⚡ VOLTAGE</div><div class="stat-val mono" style="color:var(--blue)" id="s-za-v">222<span class="stat-unit">V</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:75%;background:var(--blue)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">〰️ CURRENT</div><div class="stat-val mono" style="color:var(--green)" id="s-za-a">14.2<span class="stat-unit">A</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:47%;background:var(--green)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">💡 POWER</div><div class="stat-val mono" style="color:var(--accent)">3.1<span class="stat-unit">kW</span></div></div>
+          <div class="stat-card"><div class="stat-label">📶 FREQUENCY</div><div class="stat-val mono" style="color:var(--purple)">50.1<span class="stat-unit">Hz</span></div></div>
+          <div class="stat-card"><div class="stat-label">📊 POWER FACTOR</div><div class="stat-val mono" style="color:var(--green)">0.97</div></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--red)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="card-title" style="margin:0">ZONE B</div><div class="status-pill" style="background:#ef444422;color:var(--red);border:1px solid var(--red)">CRITICAL</div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">⚡ VOLTAGE</div><div class="stat-val mono" style="color:var(--red)">258<span class="stat-unit">V</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:95%;background:var(--red)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">〰️ CURRENT</div><div class="stat-val mono" style="color:var(--red)">38.0<span class="stat-unit">A</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:90%;background:var(--red)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">💡 POWER</div><div class="stat-val mono" style="color:var(--accent)">9.8<span class="stat-unit">kW</span></div></div>
+          <div class="stat-card"><div class="stat-label">📶 FREQUENCY</div><div class="stat-val mono" style="color:var(--purple)">49.8<span class="stat-unit">Hz</span></div></div>
+          <div class="stat-card"><div class="stat-label">📊 POWER FACTOR</div><div class="stat-val mono" style="color:var(--accent)">0.84</div></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--accent)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="card-title" style="margin:0">ZONE C</div><div class="status-pill" style="background:#f59e0b22;color:var(--accent);border:1px solid var(--accent)">WARNING</div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">⚡ VOLTAGE</div><div class="stat-val mono" style="color:var(--accent)">215<span class="stat-unit">V</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:72%;background:var(--accent)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">〰️ CURRENT</div><div class="stat-val mono" style="color:var(--green)">11.5<span class="stat-unit">A</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:38%;background:var(--green)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">💡 POWER</div><div class="stat-val mono" style="color:var(--accent)">2.4<span class="stat-unit">kW</span></div></div>
+          <div class="stat-card"><div class="stat-label">📶 FREQUENCY</div><div class="stat-val mono" style="color:var(--purple)">50.0<span class="stat-unit">Hz</span></div></div>
+          <div class="stat-card"><div class="stat-label">📊 POWER FACTOR</div><div class="stat-val mono" style="color:var(--green)">0.95</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTS TAB -->
+    <div class="content fadein" id="tab-alerts" style="display:none">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">🚨 UNRESOLVED</div><div class="stat-val mono" style="color:var(--red)" id="unresolved-count">2</div></div>
+        <div class="stat-card"><div class="stat-label">✅ RESOLVED</div><div class="stat-val mono" style="color:var(--green)" id="resolved-count">1</div></div>
+        <div class="stat-card"><div class="stat-label">📋 TOTAL</div><div class="stat-val mono" style="color:var(--blue)">4</div></div>
+      </div>
+      <div class="card" id="alerts-list">
+        <div class="card-title">ALL HAZARD ALERTS</div>
+        <div class="alert-full" style="background:#ff4d4d22;border-color:var(--red)" id="alert-full-1">
+          <div style="font-size:28px">⚡</div>
+          <div style="flex:1"><div class="alert-title">Overcurrent</div><div class="alert-meta">Zone: Zone B · Time: 09:02</div><div class="alert-meta">Detected: <b style="color:var(--red)">38A</b> · Threshold: 30A</div></div>
+          <button class="resolve-btn" style="padding:7px 14px;font-size:12px" onclick="resolveAlertFull(this, 1)">Mark Resolved</button>
+        </div>
+        <div class="alert-full" style="background:#f59e0b22;border-color:var(--accent)" id="alert-full-2">
+          <div style="font-size:28px">📈</div>
+          <div style="flex:1"><div class="alert-title">Overvoltage</div><div class="alert-meta">Zone: Zone A · Time: 08:45</div><div class="alert-meta">Detected: <b style="color:var(--accent)">258V</b> · Threshold: 250V</div></div>
+          <button class="resolve-btn" style="padding:7px 14px;font-size:12px" onclick="resolveAlertFull(this, 2)">Mark Resolved</button>
+        </div>
+        <div class="alert-full" style="background:#fb923c22;border-color:#fb923c;opacity:0.5">
+          <div style="font-size:28px">🌡️</div>
+          <div style="flex:1"><div class="alert-title">Overheating</div><div class="alert-meta">Zone: Zone D · Time: 07:30</div><div class="alert-meta">Detected: <b style="color:#fb923c">82°C</b> · Threshold: 75°C</div></div>
+          <span class="resolved-tag">✓ RESOLVED</span>
+        </div>
+        <div class="alert-full" style="background:#a855f722;border-color:var(--purple)" id="alert-full-4">
+          <div style="font-size:28px">⚠️</div>
+          <div style="flex:1"><div class="alert-title">Ground Fault</div><div class="alert-meta">Zone: Zone C · Time: 06:15</div><div class="alert-meta">Detected: <b style="color:var(--purple)">0.5A</b> · Threshold: 0.1A</div></div>
+          <button class="resolve-btn" style="padding:7px 14px;font-size:12px" onclick="resolveAlertFull(this, 4)">Mark Resolved</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKERS TAB -->
+    <div class="content fadein" id="tab-workers" style="display:none">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">👷 TOTAL</div><div class="stat-val mono" style="color:var(--blue)">4</div></div>
+        <div class="stat-card"><div class="stat-label">🟢 ONLINE</div><div class="stat-val mono" style="color:var(--green)">3</div></div>
+        <div class="stat-card"><div class="stat-label">⚫ OFFLINE</div><div class="stat-val mono" style="color:#6b7280">1</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">WORKER DIRECTORY</div>
+        <div class="worker-row"><div class="avatar avatar-md" style="position:relative">JP<div class="online-dot" style="background:var(--green)"></div></div><div style="flex:1"><div class="worker-name">Jean Pierre</div><div class="worker-sub">Field Worker · Zone A</div></div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">ONLINE</div><button class="chat-btn" onclick="adminTab('chat',null)">💬 Message</button></div>
+        <div class="worker-row"><div class="avatar avatar-md" style="position:relative">AU<div class="online-dot" style="background:var(--green)"></div></div><div style="flex:1"><div class="worker-name">Amina Uwase</div><div class="worker-sub">Field Worker · Zone B</div></div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">ONLINE</div><button class="chat-btn" onclick="adminTab('chat',null)">💬 Message</button></div>
+        <div class="worker-row"><div class="avatar avatar-md" style="position:relative">EM<div class="online-dot" style="background:#6b7280"></div></div><div style="flex:1"><div class="worker-name">Eric Mugisha</div><div class="worker-sub">Field Worker · Zone C</div></div><div class="status-pill" style="background:#6b728022;color:#6b7280;border:1px solid #6b7280">OFFLINE</div><button class="chat-btn">💬 Message</button></div>
+        <div class="worker-row"><div class="avatar avatar-md" style="position:relative">DI<div class="online-dot" style="background:var(--green)"></div></div><div style="flex:1"><div class="worker-name">Diane Iradukunda</div><div class="worker-sub">Field Worker · Zone D</div></div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">ONLINE</div><button class="chat-btn" onclick="adminTab('chat',null)">💬 Message</button></div>
+      </div>
+    </div>
+
+    <!-- CHAT TAB -->
+    <div class="chat-layout fadein" id="tab-chat" style="display:none">
+      <div class="chat-list">
+        <div class="chat-list-label">WORKERS</div>
+        <div class="chat-list-item active" onclick="selectWorker(this,'JP','Jean Pierre')"><div class="avatar avatar-sm" style="position:relative">JP<div class="online-dot" style="background:var(--green);width:8px;height:8px"></div></div><div style="flex:1;overflow:hidden"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Jean Pierre</div><div style="font-size:11px;color:var(--muted)">Check transformer B2...</div></div></div>
+        <div class="chat-list-item" onclick="selectWorker(this,'AU','Amina Uwase')"><div class="avatar avatar-sm" style="position:relative">AU<div class="online-dot" style="background:var(--green);width:8px;height:8px"></div></div><div style="flex:1;overflow:hidden"><div style="font-size:13px;font-weight:600">Amina Uwase</div><div style="font-size:11px;color:var(--muted)">Overcurrent alert!...</div></div></div>
+        <div class="chat-list-item" onclick="selectWorker(this,'EM','Eric Mugisha')"><div class="avatar avatar-sm" style="position:relative">EM<div class="online-dot" style="background:#6b7280;width:8px;height:8px"></div></div><div style="flex:1;overflow:hidden"><div style="font-size:13px;font-weight:600">Eric Mugisha</div><div style="font-size:11px;color:var(--muted)">No messages yet...</div></div></div>
+        <div class="chat-list-item" onclick="selectWorker(this,'DI','Diane Iradukunda')"><div class="avatar avatar-sm" style="position:relative">DI<div class="online-dot" style="background:var(--green);width:8px;height:8px"></div></div><div style="flex:1;overflow:hidden"><div style="font-size:13px;font-weight:600">Diane Iradukunda</div><div style="font-size:11px;color:var(--muted)">Morning: all nominal...</div></div></div>
+      </div>
+      <div class="chat-window">
+        <div class="chat-header">
+          <div class="avatar avatar-sm" id="chat-avatar">JP</div>
+          <div><div style="font-size:14px;font-weight:600" id="chat-name">Jean Pierre</div><div style="font-size:11px;color:var(--green)">● Online · Zone A</div></div>
+        </div>
+        <div class="messages-area" id="admin-messages">
+          <div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px">JP</div><div><div class="bubble bubble-worker">Voltage stable at 220V, sir.</div><div class="msg-time">08:07</div></div></div>
+          <div class="msg-row right"><div><div class="bubble bubble-admin">Great. Check transformer B2 next.</div><div class="msg-time right">08:09</div></div></div>
+          <div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px">JP</div><div><div class="bubble bubble-worker">On it right away.</div><div class="msg-time">08:10</div></div></div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="admin-chat-input" placeholder="Message Jean Pierre..." onkeydown="if(event.key==='Enter')adminSend()"/>
+          <button class="send-btn" onclick="adminSend()">SEND ➤</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- WORKER SHELL -->
+<div class="shell" id="worker-view" style="display:none">
+  <nav class="sidebar" style="background:#071220">
+    <div class="logo-wrap">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">PowerHive</div>
+        <div class="logo-sub">WORKER PORTAL</div>
+      </div>
+    </div>
+    <div style="padding:0 6px;margin-top:8px">
+      <div class="nav-label">NAVIGATION</div>
+      <button class="nav-btn active" onclick="workerTab('w-overview',this)"><span>🏠</span> Overview</button>
+      <button class="nav-btn" onclick="workerTab('w-zone',this)"><span>📡</span> My Zone</button>
+      <button class="nav-btn" onclick="workerTab('w-alerts',this)"><span>🚨</span> Alerts <span class="nav-badge">1</span></button>
+      <button class="nav-btn" onclick="workerTab('w-chat',this)"><span>💬</span> Admin Chat</button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="avatar avatar-sm" style="width:36px;height:36px;font-size:12px">JP</div>
+      <div>
+        <div style="font-size:13px;font-weight:600">Jean Pierre</div>
+        <div style="font-size:11px;color:var(--green)">● On Duty · Zone A</div>
+      </div>
+    </div>
+  </nav>
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="worker-page-title">My Dashboard</div>
+      <div class="topbar-right"><div class="live-pill"><span class="live-dot"></span>LIVE</div></div>
+    </div>
+
+    <!-- WORKER OVERVIEW -->
+    <div class="content fadein" id="tab-w-overview">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">🗺️ MY ZONE</div><div class="stat-val mono" style="color:var(--blue)">A</div></div>
+        <div class="stat-card"><div class="stat-label">⚡ VOLTAGE</div><div class="stat-val mono" style="color:var(--accent)" id="w-volt">222<span class="stat-unit">V</span></div></div>
+        <div class="stat-card"><div class="stat-label">〰️ CURRENT</div><div class="stat-val mono" style="color:var(--green)" id="w-cur">14.2<span class="stat-unit">A</span></div></div>
+        <div class="stat-card"><div class="stat-label">🚨 MY ALERTS</div><div class="stat-val mono" style="color:var(--accent)">1</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">ZONE A — CURRENT STATUS</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--muted)">Voltage</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--green)" id="w-s-volt">222 V</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--muted)">Current</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--green)" id="w-s-cur">14.2 A</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--muted)">Power</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--accent)">3.1 kW</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--muted)">Frequency</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--purple)">50.1 Hz</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--muted)">Power Factor</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--green)">0.97</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0"><span style="font-size:12px;color:var(--muted)">Status</span><span class="mono" style="font-size:13px;font-weight:700;color:var(--green)">NORMAL</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">MY ALERTS</div>
+          <div class="alert-row" style="border-color:var(--accent)"><span class="alert-icon">📈</span><div style="flex:1"><div class="alert-title">Overvoltage</div><div class="alert-meta">08:45 · 258V (limit: 250V)</div></div><div style="width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1s infinite"></div></div>
+          <div style="margin-top:14px"><div class="card-title">RECENT FROM ADMIN</div>
+            <div style="padding:8px 0;border-bottom:1px solid #0f2040"><div style="font-size:11px;color:var(--accent)">Admin · 08:09</div><div style="font-size:12px;margin-top:2px">Check transformer B2 next.</div></div>
+            <div style="padding:8px 0"><div style="font-size:11px;color:var(--blue)">You · 08:10</div><div style="font-size:12px;margin-top:2px">On it right away.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKER ZONE TAB -->
+    <div class="content fadein" id="tab-w-zone" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;font-family:'Share Tech Mono',monospace">● Live readings update every 3 seconds</div>
+      <div class="card" style="border-left:3px solid var(--green)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px"><div class="card-title" style="margin:0">ZONE A — LIVE DATA</div><div class="status-pill" style="background:#22c55e22;color:var(--green);border:1px solid var(--green)">NORMAL</div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">⚡ VOLTAGE</div><div class="stat-val mono" style="color:var(--blue)" id="wz-v">222<span class="stat-unit">V</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:75%;background:var(--blue)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">〰️ CURRENT</div><div class="stat-val mono" style="color:var(--green)" id="wz-a">14.2<span class="stat-unit">A</span></div><div class="sensor-bar"><div class="sensor-fill" style="width:47%;background:var(--green)"></div></div></div>
+          <div class="stat-card"><div class="stat-label">💡 POWER</div><div class="stat-val mono" style="color:var(--accent)">3.1<span class="stat-unit">kW</span></div></div>
+          <div class="stat-card"><div class="stat-label">📶 FREQUENCY</div><div class="stat-val mono" style="color:var(--purple)">50.1<span class="stat-unit">Hz</span></div></div>
+          <div class="stat-card"><div class="stat-label">📊 POWER FACTOR</div><div class="stat-val mono" style="color:var(--green)">0.97</div></div>
+        </div>
+        <div style="margin-top:20px;padding:12px;background:var(--deep);border-radius:6px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;font-family:'Share Tech Mono',monospace">THRESHOLDS</div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--sub)">Max Voltage</span><span style="font-size:12px;color:var(--muted)">Limit: 250V</span><span class="mono" style="font-size:12px;color:var(--green);font-weight:600">222V ✓</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #0f2040"><span style="font-size:12px;color:var(--sub)">Max Current</span><span style="font-size:12px;color:var(--muted)">Limit: 30A</span><span class="mono" style="font-size:12px;color:var(--green);font-weight:600">14.2A ✓</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:var(--sub)">Min Power Factor</span><span style="font-size:12px;color:var(--muted)">Limit: 0.90</span><span class="mono" style="font-size:12px;color:var(--green);font-weight:600">0.97 ✓</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKER ALERTS TAB -->
+    <div class="content fadein" id="tab-w-alerts" style="display:none">
+      <div class="card">
+        <div class="card-title">MY ZONE ALERTS</div>
+        <div class="alert-full" style="background:#f59e0b22;border-color:var(--accent)">
+          <div style="font-size:28px">📈</div>
+          <div style="flex:1"><div class="alert-title">Overvoltage</div><div class="alert-meta">Time: 08:45</div><div class="alert-meta">Detected: <b style="color:var(--accent)">258V</b> · Threshold: 250V</div></div>
+          <div style="color:var(--red);font-size:12px;font-weight:700;font-family:'Share Tech Mono',monospace">⚠ ACTIVE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKER CHAT TAB -->
+    <div class="chat-layout fadein" id="tab-w-chat" style="display:none">
+      <div class="chat-window">
+        <div class="chat-header">
+          <div class="avatar avatar-sm">AD</div>
+          <div><div style="font-size:14px;font-weight:600">Administrator</div><div style="font-size:11px;color:var(--green)">● Online</div></div>
+        </div>
+        <div class="messages-area" id="worker-messages">
+          <div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:#0f3460">AD</div><div><div class="bubble bubble-worker">Jean, check transformer B2.</div><div class="msg-time">08:05</div></div></div>
+          <div class="msg-row right"><div><div class="bubble bubble-admin">On it. Voltage stable at 220V.</div><div class="msg-time right">08:07</div></div></div>
+          <div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:#0f3460">AD</div><div><div class="bubble bubble-worker">Great. Check transformer B2 next.</div><div class="msg-time">08:09</div></div></div>
+          <div class="msg-row right"><div><div class="bubble bubble-admin">On it right away.</div><div class="msg-time right">08:10</div></div></div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="worker-chat-input" placeholder="Message admin..." onkeydown="if(event.key==='Enter')workerSend()"/>
+          <button class="send-btn" onclick="workerSend()">SEND ➤</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const ADMIN_TITLES = { overview:'System Overview', sensors:'Live Sensor Data', alerts:'Hazard Alerts', workers:'Field Workers', chat:'Worker Communications' };
+  const WORKER_TITLES = { 'w-overview':'My Dashboard', 'w-zone':'Zone A — Live Readings', 'w-alerts':'My Alerts', 'w-chat':'Admin Chat' };
+
+  let unresolvedCount = 2;
+
+  function switchView(v, btn) {
+    document.getElementById('admin-view').style.display = v === 'admin' ? 'flex' : 'none';
+    document.getElementById('worker-view').style.display = v === 'worker' ? 'flex' : 'none';
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function adminTab(t, btn) {
+    document.querySelectorAll('[id^="tab-"]:not([id^="tab-w-"])').forEach(el => el.style.display = 'none');
+    const el = document.getElementById('tab-' + t);
+    el.style.display = t === 'chat' ? 'flex' : 'block';
+    el.classList.remove('fadein'); void el.offsetWidth; el.classList.add('fadein');
+    document.getElementById('admin-page-title').textContent = ADMIN_TITLES[t];
+    if (btn) { document.querySelectorAll('#admin-view .nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+  }
+
+  function workerTab(t, btn) {
+    document.querySelectorAll('[id^="tab-w-"]').forEach(el => el.style.display = 'none');
+    const el = document.getElementById('tab-' + t);
+    el.style.display = t === 'w-chat' ? 'flex' : 'block';
+    el.classList.remove('fadein'); void el.offsetWidth; el.classList.add('fadein');
+    document.getElementById('worker-page-title').textContent = WORKER_TITLES[t];
+    if (btn) { document.querySelectorAll('#worker-view .nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+  }
+
+  function resolveAlert(btn, badgeId) {
+    btn.closest('.alert-row').style.opacity = '0.5';
+    btn.replaceWith(Object.assign(document.createElement('span'), { className:'resolved-tag', textContent:'✓ Resolved' }));
+    unresolvedCount = Math.max(0, unresolvedCount - 1);
+    const badge = document.getElementById(badgeId);
+    if (unresolvedCount === 0) badge.style.display = 'none'; else badge.textContent = unresolvedCount;
+  }
+
+  function resolveAlertFull(btn, id) {
+    const el = document.getElementById('alert-full-' + id);
+    el.style.opacity = '0.5';
+    btn.replaceWith(Object.assign(document.createElement('div'), { style:'color:var(--green);font-size:13px;font-weight:700;font-family:Share Tech Mono,monospace', textContent:'✓ RESOLVED' }));
+    unresolvedCount = Math.max(0, unresolvedCount - 1);
+    document.getElementById('unresolved-count').textContent = unresolvedCount;
+    document.getElementById('resolved-count').textContent = parseInt(document.getElementById('resolved-count').textContent) + 1;
+    const badge = document.getElementById('alert-badge');
+    if (unresolvedCount === 0) badge.style.display = 'none'; else badge.textContent = unresolvedCount;
+  }
+
+  function selectWorker(el, initials, name) {
+    document.querySelectorAll('.chat-list-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('chat-avatar').textContent = initials;
+    document.getElementById('chat-name').textContent = name;
+    document.getElementById('admin-chat-input').placeholder = 'Message ' + name + '...';
+  }
+
+  function adminSend() {
+    const inp = document.getElementById('admin-chat-input');
+    if (!inp.value.trim()) return;
+    const area = document.getElementById('admin-messages');
+    const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    area.insertAdjacentHTML('beforeend', `<div class="msg-row right"><div><div class="bubble bubble-admin">${inp.value}</div><div class="msg-time right">${time}</div></div></div>`);
+    inp.value = '';
+    area.scrollTop = area.scrollHeight;
+    setTimeout(() => {
+      area.insertAdjacentHTML('beforeend', `<div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px">${document.getElementById('chat-avatar').textContent}</div><div><div class="bubble bubble-worker">Understood, I will handle it immediately.</div><div class="msg-time">${time}</div></div></div>`);
+      area.scrollTop = area.scrollHeight;
+    }, 1800);
+  }
+
+  function workerSend() {
+    const inp = document.getElementById('worker-chat-input');
+    if (!inp.value.trim()) return;
+    const area = document.getElementById('worker-messages');
+    const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    area.insertAdjacentHTML('beforeend', `<div class="msg-row right"><div><div class="bubble bubble-admin">${inp.value}</div><div class="msg-time right">${time}</div></div></div>`);
+    inp.value = '';
+    area.scrollTop = area.scrollHeight;
+    setTimeout(() => {
+      area.insertAdjacentHTML('beforeend', `<div class="msg-row"><div class="avatar" style="width:28px;height:28px;font-size:10px;background:#0f3460">AD</div><div><div class="bubble bubble-worker">Received. Keep me updated on any changes.</div><div class="msg-time">${time}</div></div></div>`);
+      area.scrollTop = area.scrollHeight;
+    }, 1800);
+  }
+
+  // Live sensor simulation
+  setInterval(() => {
+    const v = (222 + (Math.random() - 0.5) * 4).toFixed(1);
+    const a = (14.2 + (Math.random() - 0.5) * 0.6).toFixed(1);
+    ['w-volt','wz-v'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = v + '<span class="stat-unit">V</span>'; });
+    ['w-cur','wz-a'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = a + '<span class="stat-unit">A</span>'; });
+    const sv = document.getElementById('w-s-volt'); if(sv) sv.textContent = v + ' V';
+    const sa = document.getElementById('w-s-cur'); if(sa) sa.textContent = a + ' A';
+    const azv = document.getElementById('s-za-v'); if(azv) azv.innerHTML = v + '<span class="stat-unit">V</span>';
+    const aza = document.getElementById('s-za-a'); if(aza) aza.innerHTML = a + '<span class="stat-unit">A</span>';
+    document.getElementById('avg-volt').innerHTML = Math.round((parseFloat(v)+258+215+220)/4) + '<span class="stat-unit">V</span>';
+  }, 3000);
+</script>
+</body>
+</html>
