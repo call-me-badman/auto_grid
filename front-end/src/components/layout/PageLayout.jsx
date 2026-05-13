@@ -6,7 +6,6 @@ import '../styles/PageLayout.css';
 const PageLayout = ({
   children,
   title,
-  showLiveIndicator = false,
   showAlertBanner = false,
   alertCount = 0,
   showThemeToggle = true,
@@ -38,12 +37,6 @@ const PageLayout = ({
               <button className="theme-toggle-topbar" onClick={toggleTheme} title="Toggle theme">
                 {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
               </button>
-            )}
-            {showLiveIndicator && (
-              <div className="live-pill">
-                <div className="live-dot"></div>
-                LIVE
-              </div>
             )}
           </div>
         </div>

@@ -107,9 +107,9 @@
 }
 
 .cta-button {
-  background-color: var(--blue);
-  color: white;
-  border: none;
+  background: rgb(255, 255, 255);
+  color: 111;
+  border: 1px solid var(--blue);
   border-radius: 12px;
   padding: 18px 48px;
   font-size: 20px;
@@ -120,8 +120,10 @@
 }
 
 .cta-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(79, 121, 184, 0.28);
 }
 
 .cta-subtext {

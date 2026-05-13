@@ -9,7 +9,7 @@
 }
 
 .worker-card-premium {
-  background: var(--card);
+  background: rgb(255, 255, 255);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -19,7 +19,6 @@
 }
 
 .worker-card-premium:hover {
-  transform: translateY(-4px);
   border-color: var(--blue);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }

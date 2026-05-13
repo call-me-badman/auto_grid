@@ -11,9 +11,19 @@ import Settings from './Settings';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  // Gmail-like: default to a compact "rail" unless pinned open
-  const [sidebarPinned, setSidebarPinned] = useState(false);
+  // Keep sidebar expanded by default (icon + label visible)
+  const [sidebarPinned, setSidebarPinned] = useState(true);
   const { isAdmin } = useAuth();
+
+  React.useEffect(() => {
+    const handleTabChange = (e) => {
+      if (e.detail && titleMap[e.detail]) {
+        setActiveTab(e.detail);
+      }
+    };
+    window.addEventListener('changeTab', handleTabChange);
+    return () => window.removeEventListener('changeTab', handleTabChange);
+  }, []);
 
   const titleMap = {
     overview: isAdmin ? 'System Overview' : 'My Dashboard',
@@ -48,7 +58,6 @@ const Dashboard = () => {
       title={titleMap[activeTab] || (isAdmin ? 'System Overview' : 'My Dashboard')}
       showAlertBanner={isAdmin}
       alertCount={isAdmin ? 2 : 1}
-      showLiveIndicator={true}
       showThemeToggle={true}
       showSidebar={true}
       sidebarCollapsed={!sidebarPinned}

@@ -1,65 +1,83 @@
-import React from 'react';
-import { AlertTriangle, Clock, ShieldCheck, Zap, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertTriangle, ShieldCheck, ChevronDown, ChevronUp, Bell, Clock, MapPin, Activity } from 'lucide-react';
 import { useAuth } from '../../contexts/ThemeContext';
 import '../styles/Alerts.css';
 
 const Alerts = () => {
   const { isAdmin, userZone } = useAuth();
+  const [expandedAlert, setExpandedAlert] = useState(null);
 
-  const allAlerts = [
-    { id: 1, type: 'critical', title: 'Line Fault Detected', zone: 'Zone B', time: '09:02 AM', status: 'ACTIVE', reading: '38A' },
-    { id: 2, type: 'warning', title: 'Voltage Flux', zone: 'Zone A', time: '08:45 AM', status: 'ACTIVE', reading: '258V' },
-    { id: 3, type: 'info', title: 'Phase Balancing', zone: 'Zone C', time: '07:30 AM', status: 'RESOLVED', reading: 'NORMAL' },
-    { id: 4, type: 'warning', title: 'Thermal Warning', zone: 'Zone A', time: '06:15 AM', status: 'RESOLVED', reading: '45°C' },
-    { id: 5, type: 'critical', title: 'High Current', zone: 'Zone D', time: '05:00 AM', status: 'RESOLVED', reading: '22A' },
-  ];
+  const allAlerts = [];
 
-  const filteredAlerts = isAdmin 
-    ? allAlerts 
+  const filteredAlerts = isAdmin
+    ? allAlerts
     : allAlerts.filter(a => a.zone === userZone);
+
+  const toggleAlert = (id) => {
+    setExpandedAlert(expandedAlert === id ? null : id);
+  };
 
   return (
     <div className="alerts-container fadein">
-      <div className="alerts-grid-view">
+      <div className="alerts-header-simple">
+        <div className="alerts-count-badge">
+          <Bell size={16} />
+          <span>{filteredAlerts.length} INCIDENTS RECORDED</span>
+        </div>
+      </div>
+
+      <div className="alerts-list-view">
         {filteredAlerts.length > 0 ? (
-          filteredAlerts.map((alert) => (
-            <div key={alert.id} className={`alert-card-premium ${alert.type} ${alert.status.toLowerCase()}`}>
-              <div className="alert-header-premium">
-                <div className="alert-type-badge">
-                  <AlertTriangle size={14} />
-                  <span>{alert.type.toUpperCase()}</span>
-                </div>
-                <div className="alert-time-badge">
-                  <Clock size={12} />
-                  <span className="mono">{alert.time}</span>
-                </div>
-              </div>
-
-              <div className="alert-body-premium">
-                <h4 className="alert-title-premium">{alert.title}</h4>
-                <div className="alert-detail-row">
-                  <div className="detail-item">
-                    <span className="detail-label">LOCATION</span>
-                    <span className="detail-value">{alert.zone}</span>
+          filteredAlerts.map((alert) => {
+            const isExpanded = expandedAlert === alert.id;
+            return (
+              <div
+                key={alert.id}
+                className={`alert-dropdown-item ${alert.type} ${isExpanded ? 'expanded' : ''}`}
+              >
+                <div className="alert-summary-row" onClick={() => toggleAlert(alert.id)}>
+                  <div className="alert-primary-info">
+                    <span className="alert-time-mini mono">{alert.time}</span>
+                    <h4 className="alert-title-text">{alert.title}</h4>
                   </div>
-                  <div className="detail-item text-right">
-                    <span className="detail-label">LAST READING</span>
-                    <span className="detail-value mono">{alert.reading}</span>
+
+                  <div className="alert-secondary-info">
+                    <span className="alert-zone-pill">
+                      <MapPin size={12} />
+                      {alert.zone}
+                    </span>
+                    <span className={`alert-status-label ${alert.status.toLowerCase()}`}>
+                      {alert.status}
+                    </span>
+                    {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </div>
                 </div>
-              </div>
 
-              <div className="alert-footer-premium">
-                <div className="status-indicator-wrap">
-                  <div className={`status-dot-pulse ${alert.status.toLowerCase()}`}></div>
-                  <span className={`status-text ${alert.status.toLowerCase()}`}>{alert.status}</span>
-                </div>
-                <button className="resolve-btn-premium">
-                  {alert.status === 'ACTIVE' ? 'RESOLVE' : 'DETAILS'}
-                </button>
+                {isExpanded && (
+                  <div className="alert-details-content">
+                    <div className="details-grid">
+                      <div className="detail-item">
+                        <label>READING</label>
+                        <div className="value mono">{alert.reading}</div>
+                      </div>
+                      <div className="detail-item">
+                        <label>SEVERITY</label>
+                        <div className={`value severity ${alert.type}`}>{alert.type.toUpperCase()}</div>
+                      </div>
+                    </div>
+                    <div className="detail-description">
+                      <label>INCIDENT ANALYSIS</label>
+                      <p>{alert.description}</p>
+                    </div>
+                    <div className="detail-actions">
+                      <button className="action-btn-small primary">ACKNOWLEDGE</button>
+                      <button className="action-btn-small secondary">VIEW LOGS</button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div className="no-alerts-state">
             <ShieldCheck size={48} color="var(--green)" />
@@ -69,7 +87,7 @@ const Alerts = () => {
         )}
       </div>
 
-      {!isAdmin && (
+      {!isAdmin && filteredAlerts.length > 0 && (
         <div className="worker-notice">
           <ShieldCheck size={16} />
           <span>Security Protocol: Displaying critical events for <strong>{userZone}</strong> only.</span>

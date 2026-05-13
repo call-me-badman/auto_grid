@@ -6,22 +6,23 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-size: inherit;
 }
 
 :root {
-  --bg: #07101f;
-  --sidebar: #080f1e;
-  --card: #0a1628;
-  --border: #1e3a5f;
-  --accent: #3b82f6;
-  --blue: #60a5fa;
-  --green: #22c55e;
-  --red: #ef4444;
-  --purple: #94a3b8;
-  --text: #e2e8f0;
-  --muted: #64748b;
-  --sub: #475569;
-  --deep: #071020;
+  --bg: #0f131a;
+  --sidebar: #111720;
+  --card: #151d28;
+  --border: #2a3442;
+  --accent: #7ea2da;
+  --blue: #7ea2da;
+  --green: #8ea0b6;
+  --red: #8ea0b6;
+  --purple: #8ea0b6;
+  --text: #e6ebf2;
+  --muted: #9aa8bb;
+  --sub: #7f8da0;
+  --deep: #111923;
   --font-main: 'Outfit', sans-serif;
   --font-accent: 'Outfit', sans-serif;
 }
@@ -32,9 +33,9 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.55;
   letter-spacing: -0.01em;
 }
 

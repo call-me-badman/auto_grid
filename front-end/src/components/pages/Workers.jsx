@@ -24,17 +24,16 @@ const Workers = () => {
             <div className="worker-card-header">
               <div className="worker-avatar-large">
                 {worker.initials}
-                <div className="status-dot-online"></div>
               </div>
               <div className="worker-card-actions">
-                <button className="icon-btn"><MoreHorizontal size={18} /></button>
+                <button className="icon-btn" title="View Details"><MoreHorizontal size={18} /></button>
               </div>
             </div>
 
             <div className="worker-card-body">
               <h4 className="worker-card-name">{worker.name}</h4>
               <p className="worker-card-role">{worker.role}</p>
-              
+
               <div className="worker-card-meta">
                 <div className="meta-item">
                   <MapPin size={14} />
@@ -47,13 +46,12 @@ const Workers = () => {
               </div>
 
               <div className="worker-action-buttons">
-                <button className="worker-btn primary">
+                <button
+                  className="worker-btn primary"
+                  onClick={() => window.dispatchEvent(new CustomEvent('changeTab', { detail: 'chat' }))}
+                >
                   <MessageSquare size={16} />
                   MESSAGE
-                </button>
-                <button className="worker-btn secondary">
-                  <Phone size={16} />
-                  CALL
                 </button>
               </div>
             </div>

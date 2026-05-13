@@ -17,7 +17,6 @@ const LandingPage = () => {
       showThemeToggle={true}
       showSidebar={false}
       showAlertBanner={false}
-      showLiveIndicator={false}
     >
       <div className="landing-container">
         <div className="landing-content">
