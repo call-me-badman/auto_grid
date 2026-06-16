@@ -6,6 +6,7 @@ import {
   Users,
   MessageSquare,
   Zap,
+  Bot,
   LogOut,
   Settings,
   Menu
@@ -16,6 +17,7 @@ import '../styles/Sidebar.css';
 const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) => {
   const { user, logout, isAdmin } = useAuth();
   const collapsed = !pinned;
+  const iconSize = collapsed ? 20 : 18;
 
   const navItems = isAdmin
     ? [
@@ -24,14 +26,14 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
       { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
       { id: 'workers', label: 'Workers', icon: Users },
       { id: 'chat', label: 'Chat', icon: MessageSquare },
-      // {id: 'ai', label: 'AI'},
+      { id: 'ai', label: 'AI', icon: Bot },
     ]
     : [
       { id: 'overview', label: 'Overview', icon: Home },
       { id: 'sensors', label: 'My Zone', icon: Activity },
       { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
       { id: 'chat', label: 'Admin Chat', icon: MessageSquare },
-      // {id: 'ai', label: 'AI'},
+      { id: 'ai', label: 'AI', icon: Bot },
     ];
 
   const handleNavClick = (tabId) => {
@@ -51,7 +53,7 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
       className={`sidebar ${collapsed ? 'collapsed' : ''}`}
     >
       <div className="logo-wrap">
-        <Zap className="logo-icon" size={28} color="var(--accent)" />
+        <Zap className="logo-icon" size={collapsed ? 24 : 22} color="var(--accent)" />
         <div className="logo-content">
           <div className="logo-text font-display">Auto_Grid</div>
           <div className="logo-sub">
@@ -65,7 +67,7 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={collapsed ? 'Expand' : 'Collapse'}
         >
-          <Menu size={18} />
+          <Menu size={iconSize} />
         </button>
       </div>
 
@@ -80,7 +82,7 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
               onClick={() => handleNavClick(item.id)}
               title={collapsed ? item.label : ''}
             >
-              <Icon size={18} />
+              <Icon size={iconSize} />
               <span className="nav-text">{item.label}</span>
               {item.badge && (
                 <span className="nav-badge">{item.badge}</span>
@@ -93,11 +95,11 @@ const Sidebar = ({ activeTab, setActiveTab, pinned = false, onTogglePinned }) =>
       <div className="sidebar-footer">
         <div className="sidebar-actions-stack">
           <button className="footer-nav-btn" onClick={handleSettings}>
-            <Settings size={18} />
+            <Settings size={iconSize} />
             <span className="footer-nav-text">Settings</span>
           </button>
           <button className="footer-nav-btn logout" onClick={handleLogout}>
-            <LogOut size={18} />
+            <LogOut size={iconSize} />
             <span className="footer-nav-text">Logout</span>
           </button>
         </div>

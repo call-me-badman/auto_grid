@@ -56,11 +56,7 @@ const Overview = () => {
         { icon: Map, label: 'TOTAL ZONES', value: '0', color: 'var(--blue)' },
         { icon: Users, label: 'WORKERS ONLINE', value: '0', color: 'var(--blue)' },
         { icon: AlertTriangle, label: 'ACTIVE ALERTS', value: '0', color: 'var(--red)' },
-        { icon: Zap, label: 'AVG VOLTAGE', value: '0V', color: 'var(--blue)' },
-        { icon: Map, label: 'TOTAL ZONES', value: '0', color: 'var(--blue)' },
-        { icon: Users, label: 'WORKERS ONLINE', value: '0', color: 'var(--blue)' },
-        { icon: AlertTriangle, label: 'ACTIVE ALERTS', value: '0', color: 'var(--red)' },
-        { icon: Zap, label: 'AVG VOLTAGE', value: '0V', color: 'var(--blue)' },
+        { icon: Zap, label: 'AVG VOLTAGE', value: '0V', color: 'var(--blue)' }
       ];
     } else {
       return [
@@ -68,10 +64,7 @@ const Overview = () => {
         { icon: Zap, label: 'CURRENT VOLTAGE', value: '0V', color: 'var(--blue)' },
         { icon: Activity, label: 'POWER STATUS', value: 'OFFLINE', color: 'var(--blue)' },
         { icon: AlertTriangle, label: 'ZONE ALERTS', value: '0', color: 'var(--red)' },
-        { icon: Map, label: 'MY ZONE', value: userZone?.split(' ')[1] || '—', color: 'var(--blue)' },
-        { icon: Zap, label: 'CURRENT VOLTAGE', value: '0V', color: 'var(--blue)' },
-        { icon: Activity, label: 'POWER STATUS', value: 'OFFLINE', color: 'var(--blue)' },
-        { icon: AlertTriangle, label: 'ZONE ALERTS', value: '0', color: 'var(--red)' },
+
       ];
     }
   };
@@ -88,7 +81,7 @@ const Overview = () => {
           >
             <Clock size={14} /> Daily readings
           </button>
-          
+
         </div>
       </div>
 
@@ -220,186 +213,19 @@ const Overview = () => {
             </div>
           </div>
 
-          {/* Frequency Trend */}
-          <div className="overview-card chart-card">
+          {/* Recent Alerts */}
+          <div className="overview-card" onClick={() => window.dispatchEvent(new CustomEvent('changeTab', { detail: 'alerts' }))} style={{ cursor: 'pointer' }}>
             <div className="card-header">
-              <h3>FREQUENCY TREND (Hz)</h3>
-              <TrendingUp size={18} className="card-icon" />
+              <h3>RECENT ALERTS</h3>
+              <AlertTriangle size={18} className="card-icon" />
             </div>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dy={15}
-                  />
-                  <YAxis
-                    domain={[49, 51]}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dx={-15}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Line type="monotone" dataKey="frequency" name="Frequency" stroke="var(--purple)" strokeWidth={2} dot={{ r: 4, fill: 'var(--purple)' }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="alert-list-mini">
+              <div className="no-data-msg">No active alerts recorded.</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="charts-section">
-        <div className="charts-grid">
-          {/* Power Trend */}
-          <div className="overview-card chart-card">
-            <div className="card-header">
-              <h3>POWER TREND (kW)</h3>
-              <Activity size={18} className="card-icon" />
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <defs>
-                    <linearGradient id="colorPower" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--blue)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--blue)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dy={15}
-                  />
-                  <YAxis
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dx={-15}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="power" name="Power" stroke="var(--blue)" fillOpacity={1} fill="url(#colorPower)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Voltage Trend */}
-          <div className="overview-card chart-card">
-            <div className="card-header">
-              <h3>VOLTAGE TREND (V)</h3>
-              <Zap size={18} className="card-icon" />
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dy={15}
-                  />
-                  <YAxis
-                    domain={['dataMin - 5', 'dataMax + 5']}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dx={-15}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Line type="monotone" dataKey="voltage" name="Voltage" stroke="var(--accent)" strokeWidth={2} dot={{ r: 4, fill: 'var(--accent)' }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Current Trend */}
-          <div className="overview-card chart-card">
-            <div className="card-header">
-              <h3>CURRENT TREND (A)</h3>
-              <Activity size={18} className="card-icon" />
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <defs>
-                    <linearGradient id="colorCurrent" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--green)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--green)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dy={15}
-                  />
-                  <YAxis
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dx={-15}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="current" name="Current" stroke="var(--green)" fillOpacity={1} fill="url(#colorCurrent)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Frequency Trend */}
-          <div className="overview-card chart-card">
-            <div className="card-header">
-              <h3>FREQUENCY TREND (Hz)</h3>
-              <TrendingUp size={18} className="card-icon" />
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                  <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dy={15}
-                  />
-                  <YAxis
-                    domain={[49, 51]}
-                    stroke="var(--muted)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    dx={-15}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Line type="monotone" dataKey="frequency" name="Frequency" stroke="var(--purple)" strokeWidth={2} dot={{ r: 4, fill: 'var(--purple)' }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="overview-grid">
         {isAdmin ? (
@@ -411,10 +237,6 @@ const Overview = () => {
               </div>
               <div className="zone-list">
                 {[
-                  { name: 'Zone A', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
-                  { name: 'Zone B', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
-                  { name: 'Zone C', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
-                  { name: 'Zone D', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
                   { name: 'Zone A', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
                   { name: 'Zone B', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
                   { name: 'Zone C', reading: '0V · 0A', status: 'OFFLINE', color: 'var(--muted)' },
@@ -431,14 +253,36 @@ const Overview = () => {
               </div>
             </div>
 
-            <div className="overview-card" onClick={() => window.dispatchEvent(new CustomEvent('changeTab', { detail: 'alerts' }))} style={{ cursor: 'pointer' }}>
+            {/* Frequency Trend */}
+            <div className="overview-card chart-card">
               <div className="card-header">
-                <h3>RECENT ALERTS</h3>
-                <AlertTriangle size={18} className="card-icon" />
+                <h3>FREQUENCY TREND (Hz)</h3>
+                <TrendingUp size={18} className="card-icon" />
               </div>
-              <div className="alert-list-mini">
-                <div className="no-data-msg">No active alerts recorded.</div>
-                <div className="no-data-msg">No active alerts recorded.</div>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey={xAxisKey}
+                      stroke="var(--muted)"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      dy={15}
+                    />
+                    <YAxis
+                      domain={[49, 51]}
+                      stroke="var(--muted)"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      dx={-15}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line type="monotone" dataKey="frequency" name="Frequency" stroke="var(--purple)" strokeWidth={2} dot={{ r: 4, fill: 'var(--purple)' }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </>
@@ -473,13 +317,36 @@ const Overview = () => {
               </div>
             </div>
 
-            <div className="overview-card" onClick={() => window.dispatchEvent(new CustomEvent('changeTab', { detail: 'chat' }))} style={{ cursor: 'pointer' }}>
+            {/* Frequency Trend for workers */}
+            <div className="overview-card chart-card">
               <div className="card-header">
-                <h3>RECENT FROM ADMIN</h3>
-                <MessageSquare size={18} className="card-icon" />
+                <h3>FREQUENCY TREND (Hz)</h3>
+                <TrendingUp size={18} className="card-icon" />
               </div>
-              <div className="admin-messages-mini">
-                <div className="no-data-msg">No recent messages.</div>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey={xAxisKey}
+                      stroke="var(--muted)"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      dy={15}
+                    />
+                    <YAxis
+                      domain={[49, 51]}
+                      stroke="var(--muted)"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      dx={-15}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line type="monotone" dataKey="frequency" name="Frequency" stroke="var(--purple)" strokeWidth={2} dot={{ r: 4, fill: 'var(--purple)' }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </>

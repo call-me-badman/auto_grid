@@ -9,6 +9,7 @@ const Chat = () => {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isWorkerTyping, setIsWorkerTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const Chat = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isWorkerTyping]);
 
   const conversations = WORKER_PERSONAS.map((w) => ({
     id: w.id,
@@ -93,7 +94,23 @@ const Chat = () => {
     saveMessages(updatedMessages);
     setInputText('');
 
-    if (!isAdmin && inputText.toLowerCase().includes('status')) {
+    // Show typing indicator for admin chat
+    if (isAdmin) {
+      setIsWorkerTyping(true);
+      setTimeout(() => {
+        setIsWorkerTyping(false);
+        const reply = {
+          id: Date.now() + 1,
+          sender: selectedChat.name,
+          senderId: selectedChat.id,
+          receiverId: 'admin',
+          content: 'Got it, let me check on that right away!',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: 'received'
+        };
+        saveMessages([...updatedMessages, reply]);
+      }, 1800);
+    } else if (inputText.toLowerCase().includes('status')) {
       setTimeout(() => {
         const reply = {
           id: Date.now() + 1,
@@ -186,6 +203,9 @@ const Chat = () => {
                 <div className="chat-details">
                   <h4 className="chat-name">{selectedChat.name}</h4>
                   {!isAdmin && <span className="direct-line-badge">DIRECT LINE</span>}
+                  {isAdmin && isWorkerTyping && (
+                    <span className="typing-text">{selectedChat.name} is typing...</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -200,6 +220,18 @@ const Chat = () => {
                     <div className="message-bubble">{msg.content}</div>
                   </div>
                 ))}
+                {isAdmin && isWorkerTyping && (
+                  <div className="message received">
+                    <div className="message-meta">
+                      {selectedChat.name}
+                    </div>
+                    <div className="message-bubble chat-typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
             </div>

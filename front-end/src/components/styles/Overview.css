@@ -2,7 +2,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .overview-header {
@@ -29,10 +29,10 @@
   background: transparent;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 200ms ease;
 }
 
 .time-btn.active {
@@ -64,14 +64,12 @@
   border: 1px solid var(--border);
   padding: 10px;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .custom-tooltip .label {
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 5px;
   color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
 }
 
 .custom-tooltip p {
@@ -89,17 +87,16 @@
 .stat-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px 28px;
+  border-radius: 8px;
+  padding: 20px 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  transition: all 0.2s ease;
+  gap: 16px;
+  transition: all 200ms ease;
 }
 
 .stat-card:hover {
   border-color: var(--blue);
-  background: var(--card);
 }
 
 .stat-icon {
@@ -111,19 +108,18 @@
 }
 
 .stat-value {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
-  font-family: 'JetBrains Mono', monospace;
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 500;
   text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .overview-grid {
@@ -135,8 +131,8 @@
 .overview-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
+  border-radius: 8px;
+  padding: 24px;
 }
 
 .overview-card.full-width {
@@ -153,16 +149,16 @@
 }
 
 .card-header h3 {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--muted);
-  letter-spacing: 1.5px;
   text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .card-icon {
-  color: var(--sub);
-  opacity: 0.5;
+  color: var(--muted);
+  opacity: 0.7;
 }
 
 /* Zone List Styles */
@@ -192,18 +188,17 @@
 
 .zone-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .zone-reading {
   font-size: 12px;
   color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
 }
 
 .status-pill-mini {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -212,7 +207,7 @@
 .alert-list-mini {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .alert-item-mini {
@@ -220,7 +215,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px;
-  background: var(--card);
+  background: var(--deep);
   border-radius: 6px;
   border-left: 3px solid transparent;
 }
@@ -241,12 +236,10 @@
 
 .alert-dot.red {
   background: var(--red);
-  box-shadow: 0 0 8px var(--red);
 }
 
 .alert-dot.amber {
   background: var(--blue);
-  box-shadow: none;
 }
 
 .alert-info-mini {
@@ -255,13 +248,12 @@
 
 .alert-title-mini {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .alert-meta-mini {
   font-size: 11px;
-  color: var(--sub);
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
 }
 
 /* Worker Detail Row */
@@ -279,20 +271,19 @@
 
 .detail-label {
   font-size: 12px;
-  color: var(--sub);
+  color: var(--muted);
 }
 
 .detail-value {
   font-size: 14px;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
 }
 
 /* Admin Messages Mini */
 .admin-messages-mini {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .mini-msg {
@@ -306,7 +297,6 @@
 
 .msg-meta {
   font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
   margin-bottom: 4px;
 }
 
@@ -328,7 +318,7 @@
 .activity-timeline {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .timeline-item {
@@ -339,8 +329,7 @@
 
 .timeline-time {
   font-size: 12px;
-  color: var(--sub);
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
 }
 
 .timeline-content {
@@ -352,9 +341,10 @@
   color: var(--blue);
 }
 
-/* Utilities */
-.mono {
-  font-family: 'JetBrains Mono', monospace;
+.no-data-msg {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 8px 0;
 }
 
 @media (max-width: 768px) {

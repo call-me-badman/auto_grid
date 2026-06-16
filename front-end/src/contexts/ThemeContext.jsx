@@ -41,7 +41,7 @@ export const WORKER_PERSONAS = [
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme === 'dark' : true;
+    return savedTheme ? savedTheme === 'dark' : false;
   });
 
   const [user, setUser] = useState(() => {
@@ -52,35 +52,35 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
-      root.style.setProperty('--bg', '#0b0f1a');
-      root.style.setProperty('--sidebar', '#101624');
-      root.style.setProperty('--card', '#161d2f');
-      root.style.setProperty('--border', '#243046');
+      root.style.setProperty('--bg', '#020617');
+      root.style.setProperty('--sidebar', '#0f172a');
+      root.style.setProperty('--card', '#1e293b');
+      root.style.setProperty('--border', '#334155');
       root.style.setProperty('--accent', '#0070f3');
       root.style.setProperty('--blue', '#0070f3');
       root.style.setProperty('--green', '#10b981');
-      root.style.setProperty('--red', '#ff0055');
+      root.style.setProperty('--red', '#ef4444');
       root.style.setProperty('--amber', '#f59e0b');
-      root.style.setProperty('--purple', '#7928ca');
-      root.style.setProperty('--text', '#f8fafc');
+      root.style.setProperty('--purple', '#7c3aed');
+      root.style.setProperty('--text', '#f1f5f9');
       root.style.setProperty('--muted', '#94a3b8');
       root.style.setProperty('--sub', '#64748b');
-      root.style.setProperty('--deep', '#070a13');
+      root.style.setProperty('--deep', '#020617');
     } else {
-      root.style.setProperty('--bg', '#f8fafc');
+      root.style.setProperty('--bg', '#f1f5f9');
       root.style.setProperty('--sidebar', '#ffffff');
       root.style.setProperty('--card', '#ffffff');
       root.style.setProperty('--border', '#e2e8f0');
       root.style.setProperty('--accent', '#0070f3');
       root.style.setProperty('--blue', '#0070f3');
-      root.style.setProperty('--green', '#059669');
-      root.style.setProperty('--red', '#dc2626');
-      root.style.setProperty('--amber', '#d97706');
-      root.style.setProperty('--purple', '#7928ca');
+      root.style.setProperty('--green', '#10b981');
+      root.style.setProperty('--red', '#ef4444');
+      root.style.setProperty('--amber', '#f59e0b');
+      root.style.setProperty('--purple', '#7c3aed');
       root.style.setProperty('--text', '#0f172a');
-      root.style.setProperty('--muted', '#475569');
-      root.style.setProperty('--sub', '#64748b');
-      root.style.setProperty('--deep', '#f1f5f9');
+      root.style.setProperty('--muted', '#64748b');
+      root.style.setProperty('--sub', '#94a3b8');
+      root.style.setProperty('--deep', '#f8fafc');
     }
   }, [isDarkMode]);
 

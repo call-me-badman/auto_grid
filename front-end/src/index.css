@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 *,
 *::before,
@@ -10,21 +10,21 @@
 }
 
 :root {
-  --bg: #0f131a;
-  --sidebar: #111720;
-  --card: #151d28;
-  --border: #2a3442;
-  --accent: #7ea2da;
-  --blue: #7ea2da;
-  --green: #8ea0b6;
-  --red: #8ea0b6;
-  --purple: #8ea0b6;
-  --text: #e6ebf2;
-  --muted: #9aa8bb;
-  --sub: #7f8da0;
-  --deep: #111923;
-  --font-main: 'Outfit', sans-serif;
-  --font-accent: 'Outfit', sans-serif;
+  --bg: #0f172a;
+  --sidebar: #ffffff;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --accent: #0070f3;
+  --blue: #0070f3;
+  --green: #10b981;
+  --red: #ef4444;
+  --purple: #7c3aed;
+  --text: #0f172a;
+  --muted: #64748b;
+  --sub: #94a3b8;
+  --deep: #f8fafc;
+  --font-main: 'Inter', sans-serif;
+  --font-accent: 'Inter', sans-serif;
 }
 
 body {
@@ -33,10 +33,10 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.55;
-  letter-spacing: -0.01em;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .mono {
@@ -50,18 +50,18 @@ body {
 .font-display {
   font-family: var(--font-main);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   font-size: 1.25em;
 }
 
 .font-heading {
   font-family: var(--font-main);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .font-body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
 }
 

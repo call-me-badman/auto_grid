@@ -6,6 +6,7 @@ import Overview from './Overview';
 import Sensors from './Sensors';
 import Alerts from './Alerts';
 import Chat from './Chat';
+import AI from './AI';
 import Workers from './Workers';
 import Settings from './Settings';
 
@@ -31,6 +32,7 @@ const Dashboard = () => {
     alerts: 'Alerts',
     workers: 'Workers',
     chat: isAdmin ? 'Communications' : 'Admin Chat',
+    ai: 'AI Assistant',
     settings: 'Settings'
   };
 
@@ -46,6 +48,8 @@ const Dashboard = () => {
         return <Workers />;
       case 'chat':
         return <Chat />;
+      case 'ai':
+        return <AI />;
       case 'settings':
         return <Settings />;
       default:

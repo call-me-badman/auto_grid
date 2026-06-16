@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import '../styles/PageLayout.css';
@@ -14,6 +14,26 @@ const PageLayout = ({
   sidebarCollapsed = false
 }) => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const contentRef = useRef(null);
+
+  const handleScroll = () => {
+    if (contentRef.current) {
+      setIsScrolled(contentRef.current.scrollTop > 10);
+    }
+  };
+
+  useEffect(() => {
+    const element = contentRef.current;
+    if (element) {
+      element.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (element) {
+        element.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
 
   return (
     <div className="page-layout">
@@ -27,7 +47,7 @@ const PageLayout = ({
       {/* Main Content Area */}
       <div className="page-main-content-wrapper">
         {/* Topbar */}
-        <div className="page-topbar">
+        <div className={`page-topbar ${isScrolled ? 'scrolled' : ''}`}>
           <div className="page-title">{title}</div>
           <div className="topbar-right">
             {showAlertBanner && (
@@ -42,7 +62,7 @@ const PageLayout = ({
         </div>
 
         {/* Main Content */}
-        <div className="page-main-content">
+        <div className="page-main-content" ref={contentRef}>
           {children}
         </div>
       </div>
